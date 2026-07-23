@@ -90,6 +90,27 @@ directions. Closing dates export to a calendar file.
 **Deadline radar** — every inspection, financing, and closing date across all
 live deals in the next 30 days, in one list, soonest first.
 
+**Requests** — four forms the team submits from one place.
+
+| Form | Where it goes |
+|---|---|
+| Marketing Request | monday board `18423565607` (TKG Marketing Requests) |
+| Vendor & Repair Request | monday board `18423565621` (TKG Vendor & Repair Requests) |
+| Listing Request | LPT JotForm `233066564363155` |
+| New Offer | LPT JotForm `233064180759156` |
+
+The first two are ours — submitting creates a tracked monday item with an
+owner and a due date. The last two belong to the brokerage and are
+deliberately **not** rebuilt here; that would fork a compliance path. The hub
+launches them and points at the CKOS command (`/listing-request`, `/offer`)
+that prefills them from Lofty first.
+
+All four open in a new tab. They cannot be embedded — monday's
+`frame-ancestors` CSP only permits monday domains.
+
+Form definitions live in `assets/js/requests.js`. Questions and branding are
+edited on monday itself, not in this repo.
+
 **Data check** — where the board contradicts itself. Deals sitting in a group
 that disagrees with their status, live deals with no price or no GCI %, files
 under contract with no closing date or no title company, records flagged in the
@@ -135,6 +156,7 @@ assets/css/app.css          design system, TKG brand tokens
 assets/js/app.js            router + views
 assets/js/store.js          decryption, checklist state, date + money helpers
 assets/js/checklists.js     the transaction checklists
+assets/js/requests.js       the request forms and where each one goes
 data/deals.enc.json         encrypted deal data (committed)
 tools/board-dump.json       plaintext board export (NOT committed)
 tools/build_data.py         normalize + encrypt

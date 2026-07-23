@@ -3,6 +3,7 @@
    ========================================================================== */
 
 import { checklistFor } from "./checklists.js";
+import { REQUESTS } from "./requests.js";
 import {
   loadDeals, savedPasscode, rememberPasscode, forgetPasscode,
   whoAmI, setWhoAmI,
@@ -505,6 +506,49 @@ function viewDeal(id) {
     </div>`;
 }
 
+function viewRequests() {
+  const card = (r) => `
+    <div class="req">
+      <div class="req__kind req__kind--${r.kind}">
+        ${r.kind === "internal" ? "Internal · monday" : "Brokerage · LPT"}
+      </div>
+      <h3 class="req__title">${esc(r.title)}</h3>
+      <p class="req__blurb">${esc(r.blurb)}</p>
+      <div class="req__where">${esc(r.where)}</div>
+
+      ${r.prefill ? `<div class="req__prefill">${esc(r.prefill)}</div>` : ""}
+
+      <div class="req__need">
+        <div class="req__need-label">Have this ready</div>
+        <ul>${r.needBefore.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>
+      </div>
+
+      <div class="req__acts">
+        <a class="btn btn--sm" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.cta)}</a>
+        ${r.boardUrl ? `<a class="btn btn--ghost btn--sm" href="${esc(r.boardUrl)}" target="_blank" rel="noopener">See the board</a>` : ""}
+      </div>
+    </div>`;
+
+  return `
+    <div class="wrap">
+      <div class="page-head">
+        <div>
+          <div class="eyebrow">Submit a request</div>
+          <h1>Requests</h1>
+        </div>
+        <a class="btn btn--ghost btn--sm" href="#/">Back to dashboard</a>
+      </div>
+
+      <p class="note-inline" style="margin-bottom:20px">
+        Marketing and vendor requests create a tracked item on a TKG monday board — someone
+        owns it and it has a due date. Listing and offer forms belong to LPT and go straight
+        to the brokerage. All four open in a new tab.
+      </p>
+
+      <div class="reqs">${REQUESTS.map(card).join("")}</div>
+    </div>`;
+}
+
 function viewSettings() {
   return `
     <div class="wrap">
@@ -607,6 +651,7 @@ function route() {
   const dealMatch = hash.match(/^#\/deal\/(.+)$/);
   if (dealMatch) view.innerHTML = viewDeal(dealMatch[1]);
   else if (hash === "#/radar") view.innerHTML = viewRadar();
+  else if (hash === "#/requests") view.innerHTML = viewRequests();
   else if (hash === "#/hygiene") view.innerHTML = viewHygiene();
   else if (hash === "#/settings") view.innerHTML = viewSettings();
   else view.innerHTML = viewDashboard();

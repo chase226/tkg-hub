@@ -840,6 +840,93 @@ select.input { appearance: none; padding-right: 34px; cursor: pointer;
 .radar-row__what span { font-size: 12.5px; color: var(--text-3); }
 .radar-row__date { font-size: 12px; color: var(--text-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
+/* --------------------------------------------------------- requests -- */
+
+.reqs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+/* Capped at two columns so four cards read as a tidy 2x2 rather than a
+   three-across row with one orphan underneath. */
+@media (min-width: 760px) {
+  .reqs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.req {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.req__kind {
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.req__kind--internal { background: rgba(118, 159, 182, 0.2); color: #4b7f9c; }
+.req__kind--brokerage { background: rgba(201, 166, 107, 0.22); color: #8a6a2c; }
+
+:root[data-theme="dark"] .req__kind--internal,
+:root[data-theme="dark"] .req__kind--brokerage { color: #fff; }
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .req__kind--internal,
+  :root:not([data-theme="light"]) .req__kind--brokerage { color: #fff; }
+}
+
+.req__title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 21px;
+  margin-bottom: 7px;
+}
+
+.req__blurb { font-size: 13.5px; color: var(--text-2); line-height: 1.5; margin-bottom: 9px; }
+
+.req__where {
+  font-size: 12px;
+  color: var(--text-3);
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+}
+
+.req__prefill {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-2);
+  background: var(--blue-10);
+  border-radius: var(--r-sm);
+  padding: 11px 13px;
+  margin-bottom: 14px;
+}
+
+.req__need-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  margin-bottom: 6px;
+}
+
+.req__need ul { margin: 0 0 16px; padding-left: 17px; font-size: 13px; color: var(--text-2); }
+.req__need li { margin-bottom: 4px; line-height: 1.45; }
+
+.req__acts { display: flex; gap: 7px; flex-wrap: wrap; margin-top: auto; }
+
 /* ------------------------------------------------------------ empty -- */
 
 .empty {
