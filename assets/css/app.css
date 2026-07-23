@@ -840,92 +840,247 @@ select.input { appearance: none; padding-right: 34px; cursor: pointer;
 .radar-row__what span { font-size: 12.5px; color: var(--text-3); }
 .radar-row__date { font-size: 12px; color: var(--text-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
-/* --------------------------------------------------------- requests -- */
+/* ---------------------------------------------------------- home hero -- */
 
-.reqs {
+.hero {
+  background: var(--navy);
+  color: var(--text-on-dark);
+  padding: 40px 0 34px;
+  margin-bottom: 26px;
+}
+
+.hero__eyebrow {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--blue-60);
+  margin-bottom: 8px;
+}
+
+.hero__title {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: clamp(30px, 5.6vw, 48px);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  margin-bottom: 8px;
+}
+
+.hero__sub {
+  font-size: 14.5px;
+  color: rgba(245, 245, 243, 0.6);
+  max-width: 44ch;
+  margin: 0;
+}
+
+/* -------------------------------------------------------- request tiles -- */
+
+.tiles {
   display: grid;
   grid-template-columns: 1fr;
   gap: 14px;
 }
 
-/* Capped at two columns so four cards read as a tidy 2x2 rather than a
+/* Capped at two columns so four tiles read as a tidy 2x2 rather than a
    three-across row with one orphan underneath. */
-@media (min-width: 760px) {
-  .reqs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 780px) {
+  .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
-.req {
+.tile {
+  position: relative;
   display: flex;
   flex-direction: column;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r-lg);
-  padding: 20px;
+  padding: 22px;
+  text-decoration: none;
+  color: inherit;
   box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: transform 0.16s, box-shadow 0.16s, border-color 0.16s;
 }
 
-.req__kind {
-  align-self: flex-start;
-  padding: 3px 10px;
-  border-radius: 999px;
+/* A thin accent rail that fills in on hover — signals the tile is a door,
+   not a panel. */
+.tile::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent, var(--blue));
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 0.22s ease;
+}
+
+.tile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+  border-color: var(--border-strong);
+}
+
+.tile:hover::before { transform: scaleY(1); }
+
+.tile--internal  { --accent: var(--blue); }
+.tile--brokerage { --accent: var(--warning); }
+
+.tile__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.tile__icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  /* Fallback first for Safari older than 16.2, which lacks color-mix(). */
+  background: var(--blue-10);
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.tile__icon svg { width: 21px; height: 21px; }
+
+.tile__kind {
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.11em;
   text-transform: uppercase;
-  margin-bottom: 12px;
+  color: var(--text-3);
+  text-align: right;
 }
 
-.req__kind--internal { background: rgba(118, 159, 182, 0.2); color: #4b7f9c; }
-.req__kind--brokerage { background: rgba(201, 166, 107, 0.22); color: #8a6a2c; }
-
-:root[data-theme="dark"] .req__kind--internal,
-:root[data-theme="dark"] .req__kind--brokerage { color: #fff; }
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .req__kind--internal,
-  :root:not([data-theme="light"]) .req__kind--brokerage { color: #fff; }
-}
-
-.req__title {
+.tile__title {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 21px;
-  margin-bottom: 7px;
+  font-size: 22px;
+  margin-bottom: 6px;
 }
 
-.req__blurb { font-size: 13.5px; color: var(--text-2); line-height: 1.5; margin-bottom: 9px; }
-
-.req__where {
-  font-size: 12px;
-  color: var(--text-3);
-  padding-bottom: 14px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 14px;
-}
-
-.req__prefill {
-  font-size: 12.5px;
-  line-height: 1.55;
+.tile__blurb {
+  font-size: 13.5px;
   color: var(--text-2);
-  background: var(--blue-10);
-  border-radius: var(--r-sm);
-  padding: 11px 13px;
-  margin-bottom: 14px;
+  line-height: 1.5;
+  margin-bottom: 15px;
 }
 
-.req__need-label {
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+.tile__need {
+  border-top: 1px solid var(--border);
+  padding-top: 13px;
+  margin-bottom: 16px;
+}
+
+.tile__need-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
   text-transform: uppercase;
   color: var(--text-3);
   margin-bottom: 6px;
 }
 
-.req__need ul { margin: 0 0 16px; padding-left: 17px; font-size: 13px; color: var(--text-2); }
-.req__need li { margin-bottom: 4px; line-height: 1.45; }
+.tile__need ul { margin: 0; padding-left: 16px; font-size: 12.5px; color: var(--text-3); }
+.tile__need li { margin-bottom: 3px; line-height: 1.45; }
 
-.req__acts { display: flex; gap: 7px; flex-wrap: wrap; margin-top: auto; }
+.tile__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: auto;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.tile__go svg { width: 15px; height: 15px; transition: transform 0.18s; }
+.tile:hover .tile__go svg { transform: translateX(3px); }
+
+/* ------------------------------------------------------------- glance -- */
+
+.glance {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+@media (max-width: 780px) {
+  .glance { grid-template-columns: 1fr; }
+}
+
+.glance__urgent,
+.glance__links {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.glance__label {
+  padding: 14px 18px 10px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+.urg {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 11px 18px;
+  border-top: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.12s;
+}
+
+.urg:hover { background: var(--blue-10); }
+
+.urg__when {
+  flex-shrink: 0;
+  width: 74px;
+  font-size: 12.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.urg__when--overdue { color: var(--danger); }
+.urg__when--soon { color: #8a6a2c; }
+
+.urg__what { font-size: 13.5px; color: var(--text-2); min-width: 0; }
+.urg__what b { color: var(--text); font-weight: 600; }
+
+.urg--none, .urg--more { font-size: 13px; color: var(--text-3); }
+.urg--more { font-weight: 600; color: var(--blue); }
+
+.glance__link {
+  display: block;
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.12s;
+}
+
+.glance__link:first-child { border-top: 0; }
+.glance__link:hover { background: var(--blue-10); }
+.glance__link b { display: block; font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.glance__link span { font-size: 12.5px; color: var(--text-3); }
 
 /* ------------------------------------------------------------ empty -- */
 

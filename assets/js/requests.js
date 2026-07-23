@@ -18,9 +18,18 @@
    frame-ancestors to monday domains. So every form opens in a new tab.
    ========================================================================== */
 
+/* Simple stroke icons, 24x24, drawn with currentColor. */
+const ICONS = {
+  megaphone: '<path d="M3 11v2a1 1 0 001 1h2l4 4V6L6 10H4a1 1 0 00-1 1z"/><path d="M14 8a4 4 0 010 8"/><path d="M17 5a8 8 0 010 14"/>',
+  wrench: '<path d="M15 3a5 5 0 00-4.6 7L3 17.4V21h3.6l7.4-7.4A5 5 0 1015 3z"/><circle cx="15.5" cy="8.5" r="1.2"/>',
+  home: '<path d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-7H9v7H4a1 1 0 01-1-1z"/>',
+  doc: '<path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/>',
+};
+
 export const REQUESTS = [
   {
     id: "marketing",
+    icon: ICONS.megaphone,
     title: "Marketing Request",
     blurb:
       "Graphics, flyers, Reels, email blasts, Just Listed and Just Sold posts.",
@@ -37,6 +46,7 @@ export const REQUESTS = [
   },
   {
     id: "vendor",
+    icon: ICONS.wrench,
     title: "Vendor & Repair Request",
     blurb:
       "Painter, cleaner, contractor, inspector, landscaper, junk haul — anything that needs a person at a property.",
@@ -53,6 +63,7 @@ export const REQUESTS = [
   },
   {
     id: "listing",
+    icon: ICONS.home,
     title: "Listing Request",
     blurb:
       "Opens a new listing with the brokerage. Commission, admin fee, photography, sign and lockbox, go-live date.",
@@ -70,6 +81,7 @@ export const REQUESTS = [
   },
   {
     id: "offer",
+    icon: ICONS.doc,
     title: "New Offer",
     blurb:
       "Submits a buyer's offer through the brokerage. Terms, EMD, inspection deadlines, title company.",

@@ -299,7 +299,7 @@ function viewRadar() {
           <div class="eyebrow">Next 30 days</div>
           <h1>Deadline Radar</h1>
         </div>
-        <a class="btn btn--ghost btn--sm" href="#/">Back to dashboard</a>
+        <a class="btn btn--ghost btn--sm" href="#/">Home</a>
       </div>
       <div class="card"><div class="card__body--flush">${body}</div></div>
     </div>`;
@@ -330,7 +330,7 @@ function viewHygiene() {
           <div class="eyebrow">Board integrity</div>
           <h1>Data Check</h1>
         </div>
-        <a class="btn btn--ghost btn--sm" href="#/">Back to dashboard</a>
+        <a class="btn btn--ghost btn--sm" href="#/">Home</a>
       </div>
       <p class="note-inline" style="margin-bottom:18px">
         Every issue below is a deal whose monday record contradicts itself or is missing
@@ -433,7 +433,7 @@ function viewDeal(id) {
   return `
     <div class="detail-head">
       <div class="wrap">
-        <a class="back-link" href="#/">← All deals</a>
+        <a class="back-link" href="#/deals">← All deals</a>
         <h1>${esc(d.street)}</h1>
         ${d.locality ? `<div class="locality">${esc(d.locality)}</div>` : ""}
         <div class="detail-head__pills">
@@ -506,46 +506,100 @@ function viewDeal(id) {
     </div>`;
 }
 
-function viewRequests() {
-  const card = (r) => `
-    <div class="req">
-      <div class="req__kind req__kind--${r.kind}">
-        ${r.kind === "internal" ? "Internal · monday" : "Brokerage · LPT"}
+function reqTile(r) {
+  return `
+    <a class="tile tile--${r.kind}" href="${esc(r.url)}" target="_blank" rel="noopener">
+      <div class="tile__top">
+        <span class="tile__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+               stroke-linecap="round" stroke-linejoin="round">${r.icon}</svg>
+        </span>
+        <span class="tile__kind">${r.kind === "internal" ? "Tracked on monday" : "Goes to LPT"}</span>
       </div>
-      <h3 class="req__title">${esc(r.title)}</h3>
-      <p class="req__blurb">${esc(r.blurb)}</p>
-      <div class="req__where">${esc(r.where)}</div>
 
-      ${r.prefill ? `<div class="req__prefill">${esc(r.prefill)}</div>` : ""}
+      <h3 class="tile__title">${esc(r.title)}</h3>
+      <p class="tile__blurb">${esc(r.blurb)}</p>
 
-      <div class="req__need">
-        <div class="req__need-label">Have this ready</div>
+      <div class="tile__need">
+        <span class="tile__need-label">Have ready</span>
         <ul>${r.needBefore.map((n) => `<li>${esc(n)}</li>`).join("")}</ul>
       </div>
 
-      <div class="req__acts">
-        <a class="btn btn--sm" href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.cta)}</a>
-        ${r.boardUrl ? `<a class="btn btn--ghost btn--sm" href="${esc(r.boardUrl)}" target="_blank" rel="noopener">See the board</a>` : ""}
-      </div>
-    </div>`;
+      <span class="tile__go">${esc(r.cta)}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg></span>
+    </a>`;
+}
+
+function viewHome() {
+  const live = DB.deals.filter((d) => d.isLive);
+  const pipelineVol = live.reduce((n, d) => n + (d.price || 0), 0);
+  const flagged = DB.deals.filter((d) => d.flags.length).length;
+
+  // The three most urgent things across every live deal — the one thing worth
+  // seeing before you do anything else.
+  const soon = [];
+  for (const d of live) {
+    for (const dl of allDeadlines(d)) {
+      if (dl.past) continue;
+      const n = daysUntil(dl.date);
+      if (n === null || n > 14) continue;
+      soon.push({ deal: d, label: dl.label, date: dl.date, n });
+    }
+  }
+  soon.sort((a, b) => a.n - b.n);
+
+  const soonHtml = soon.length
+    ? soon
+        .slice(0, 3)
+        .map((r) => {
+          const c = fmtCountdown(r.date);
+          return `<a class="urg" href="#/deal/${r.deal.id}">
+            <span class="urg__when urg__when--${c.tone}">${esc(c.text)}</span>
+            <span class="urg__what"><b>${esc(r.deal.street)}</b> ${esc(r.label)}</span>
+          </a>`;
+        })
+        .join("")
+    : `<div class="urg urg--none">Nothing due in the next two weeks.</div>`;
+
+  const extra = soon.length > 3 ? soon.length - 3 : 0;
 
   return `
+    <div class="hero">
+      <div class="wrap">
+        <div class="hero__eyebrow">The Kincer Group</div>
+        <h1 class="hero__title">What do you need?</h1>
+        <p class="hero__sub">
+          Submit it here and it gets tracked. Nothing gets lost in a text thread.
+        </p>
+      </div>
+    </div>
+
     <div class="wrap">
-      <div class="page-head">
-        <div>
-          <div class="eyebrow">Submit a request</div>
-          <h1>Requests</h1>
-        </div>
-        <a class="btn btn--ghost btn--sm" href="#/">Back to dashboard</a>
+      <div class="tiles">${REQUESTS.map(reqTile).join("")}</div>
+
+      <div class="section-title" style="margin-top:34px">
+        <h2>Where things stand</h2>
+        <span>${live.length} live deals · ${fmtMoney(pipelineVol, true)} in the pipeline</span>
       </div>
 
-      <p class="note-inline" style="margin-bottom:20px">
-        Marketing and vendor requests create a tracked item on a TKG monday board — someone
-        owns it and it has a due date. Listing and offer forms belong to LPT and go straight
-        to the brokerage. All four open in a new tab.
-      </p>
-
-      <div class="reqs">${REQUESTS.map(card).join("")}</div>
+      <div class="glance">
+        <div class="glance__urgent">
+          <div class="glance__label">Needs attention first</div>
+          ${soonHtml}
+          ${extra ? `<a class="urg urg--more" href="#/radar">+ ${extra} more in the next 14 days</a>` : ""}
+        </div>
+        <div class="glance__links">
+          <a class="glance__link" href="#/deals">
+            <b>All deals</b><span>Pipeline, filters, per-deal checklists</span>
+          </a>
+          <a class="glance__link" href="#/radar">
+            <b>Deadline radar</b><span>Everything due in the next 30 days</span>
+          </a>
+          <a class="glance__link" href="#/hygiene">
+            <b>Data check</b><span>${flagged} board records need fixing</span>
+          </a>
+        </div>
+      </div>
     </div>`;
 }
 
@@ -557,7 +611,7 @@ function viewSettings() {
           <div class="eyebrow">Your device</div>
           <h1>Settings</h1>
         </div>
-        <a class="btn btn--ghost btn--sm" href="#/">Back to dashboard</a>
+        <a class="btn btn--ghost btn--sm" href="#/">Home</a>
       </div>
 
       <div class="card">
@@ -650,11 +704,11 @@ function route() {
 
   const dealMatch = hash.match(/^#\/deal\/(.+)$/);
   if (dealMatch) view.innerHTML = viewDeal(dealMatch[1]);
+  else if (hash === "#/deals") view.innerHTML = viewDashboard();
   else if (hash === "#/radar") view.innerHTML = viewRadar();
-  else if (hash === "#/requests") view.innerHTML = viewRequests();
   else if (hash === "#/hygiene") view.innerHTML = viewHygiene();
   else if (hash === "#/settings") view.innerHTML = viewSettings();
-  else view.innerHTML = viewDashboard();
+  else view.innerHTML = viewHome();
 
   document.querySelectorAll(".topnav a").forEach((a) => {
     a.classList.toggle("is-active", a.getAttribute("href") === hash);
