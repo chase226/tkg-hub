@@ -1,0 +1,9 @@
+# The team passcode. NEVER commit this — it is the key to the deal data.
+.passcode
+
+# The plaintext board export. Only the encrypted build output ships.
+tools/board-dump.json
+
+.DS_Store
+*.pyc
+__pycache__/

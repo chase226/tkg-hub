@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TKG Hub — Transaction Dashboard</title>
+<meta name="description" content="Internal transaction dashboard for The Kincer Group.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#282e39">
+<link rel="icon" href="assets/img/k-navy.svg">
+<link rel="apple-touch-icon" href="assets/img/k-navy.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<!-- ============================================================== gate -- -->
+<div class="gate" id="gate">
+  <div class="gate__card">
+    <img class="gate__logo" src="assets/img/k-navy.svg" alt="The Kincer Group">
+    <h1>TKG Hub</h1>
+    <p>Team access only. Enter the passcode.</p>
+
+    <form class="gate__form" id="gate-form">
+      <input class="input" id="gate-pass" type="password" placeholder="Team passcode"
+             autocomplete="current-password" required>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-3);justify-content:center">
+        <input type="checkbox" id="gate-remember" checked style="width:15px;height:15px">
+        Keep me signed in on this device
+      </label>
+      <button class="btn btn--block" id="gate-btn" type="submit">Unlock</button>
+    </form>
+
+    <p class="gate__err" id="gate-err"></p>
+    <p class="gate__foot">
+      Deal data is AES-256-GCM encrypted at rest. The passcode never leaves this browser
+      and is never sent to a server.
+    </p>
+  </div>
+</div>
+
+<!-- =============================================================== app -- -->
+<div class="app hidden" id="app">
+  <header class="topbar">
+    <div class="wrap topbar__inner">
+      <a class="brand" href="#/">
+        <img class="brand__k" src="assets/img/k-offwhite.svg" alt="">
+        <span class="brand__name">TKG&nbsp;<b>Hub</b></span>
+      </a>
+      <nav class="topnav">
+        <a href="#/">Deals</a>
+        <a href="#/radar">Radar</a>
+        <a href="#/hygiene">Data</a>
+        <a href="#/settings">Settings</a>
+        <button class="icon-btn" id="theme-btn" title="Toggle light / dark" aria-label="Toggle theme">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+          </svg>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="view"></main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module" src="assets/js/app.js"></script>
+</body>
+</html>
